@@ -37,19 +37,12 @@ public class GameEngine {
 	private int timer = 45;
 
 	public GameEngine(){
-		DifficultyLevel chosenDifficulty = DifficultyManager.getInstance().getCurrentDifficulty();
-		String configFileName = "";
-		switch (chosenDifficulty) {
-			case EASY:
-				configFileName = "src/main/resources/config_easy.json";
-				break;
-			case NORMAL:
-				configFileName = "src/main/resources/config_medium.json";
-				break;
-			case HARD:
-				configFileName = "src/main/resources/config_hard.json";
-				break;
-		}
+		DifficultyManager.getInstance().setDifficultyChangeListener(this::onDifficultyChanged);
+		initializeGame(DifficultyManager.getInstance().getCurrentDifficulty());
+	}
+
+	private void initializeGame(DifficultyLevel chosenDifficulty) {
+		String configFileName = getConfigFileName(chosenDifficulty);
 		ConfigReader.parse(configFileName);
 
 		// Get game width and height
@@ -60,7 +53,6 @@ public class GameEngine {
 		this.player = new Player(ConfigReader.getPlayerInfo());
 		renderables.add(player);
 
-
 		Director director = new Director();
 		BunkerBuilder bunkerBuilder = new BunkerBuilder();
 		//Get Bunkers info
@@ -70,7 +62,6 @@ public class GameEngine {
 			renderables.add(bunker);
 		}
 
-
 		EnemyBuilder enemyBuilder = new EnemyBuilder();
 		//Get Enemy info
 		for(Object eachEnemyInfo:ConfigReader.getEnemiesInfo()){
@@ -78,7 +69,33 @@ public class GameEngine {
 			gameObjects.add(enemy);
 			renderables.add(enemy);
 		}
+	}
 
+	private String getConfigFileName(DifficultyLevel difficulty) {
+		switch (difficulty) {
+			case EASY:
+				return "src/main/resources/config_easy.json";
+			case NORMAL:
+				return "src/main/resources/config_medium.json";
+			case HARD:
+				return "src/main/resources/config_hard.json";
+			default:
+				return "src/main/resources/config_easy.json"; // Default to EASY if unknown
+		}
+	}
+
+	private void onDifficultyChanged(DifficultyLevel newDifficulty) {
+		clearGameState();
+		initializeGame(newDifficulty);
+	}
+
+	private void clearGameState() {
+		gameObjects.clear();
+		pendingToAddGameObject.clear();
+		pendingToRemoveGameObject.clear();
+		pendingToAddRenderable.clear();
+		pendingToRemoveRenderable.clear();
+		renderables.clear();
 	}
 
 	/**

@@ -44,6 +44,16 @@ class KeyboardInputHandler {
                 shoot.play();
             }
         }
+        // Inside the handlePressed method
+        if (keyEvent.getCode().equals(KeyCode.E)) {
+            DifficultyManager.getInstance().setCurrentDifficulty(DifficultyLevel.EASY);
+        }
+        if (keyEvent.getCode().equals(KeyCode.N)) {
+            DifficultyManager.getInstance().setCurrentDifficulty(DifficultyLevel.NORMAL);
+        }
+        if (keyEvent.getCode().equals(KeyCode.H)) {
+            DifficultyManager.getInstance().setCurrentDifficulty(DifficultyLevel.HARD);
+        }
 
         if (keyEvent.getCode().equals(KeyCode.LEFT)) {
             left = true;

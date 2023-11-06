@@ -36,9 +36,21 @@ public class GameEngine {
 	private int gameHeight;
 	private int timer = 45;
 
-	public GameEngine(String config){
-		// Read the config here
-		ConfigReader.parse(config);
+	public GameEngine(){
+		DifficultyLevel chosenDifficulty = DifficultyManager.getInstance().getCurrentDifficulty();
+		String configFileName = "";
+		switch (chosenDifficulty) {
+			case EASY:
+				configFileName = "src/main/resources/config_easy.json";
+				break;
+			case NORMAL:
+				configFileName = "src/main/resources/config_medium.json";
+				break;
+			case HARD:
+				configFileName = "src/main/resources/config_hard.json";
+				break;
+		}
+		ConfigReader.parse(configFileName);
 
 		// Get game width and height
 		gameWidth = ((Long)((JSONObject) ConfigReader.getGameInfo().get("size")).get("x")).intValue();
